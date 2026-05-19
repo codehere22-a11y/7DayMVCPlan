@@ -1,0 +1,197 @@
+
+<style>
+  :root { --gap: 10px; }
+  .plan-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: var(--gap); padding: 1rem 0; }
+  .day-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 10px 8px; cursor: pointer; transition: border-color .2s, background .15s; }
+  .day-card:hover { border-color: var(--color-border-primary); background: var(--color-background-secondary); }
+  .day-card.active { border: 1.5px solid var(--color-border-info); background: var(--color-background-info); }
+  .day-label { font-size: 11px; font-weight: 500; color: var(--color-text-secondary); margin-bottom: 4px; }
+  .day-title { font-size: 12px; font-weight: 500; color: var(--color-text-primary); line-height: 1.4; }
+  .day-badge { display: inline-block; font-size: 10px; padding: 2px 6px; border-radius: 10px; margin-top: 5px; }
+  .badge-core { background: var(--color-background-warning); color: var(--color-text-warning); }
+  .badge-build { background: var(--color-background-success); color: var(--color-text-success); }
+  .badge-prod { background: var(--color-background-danger); color: var(--color-text-danger); }
+  .detail-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1.25rem 1.5rem; margin-top: 12px; }
+  .detail-title { font-size: 16px; font-weight: 500; color: var(--color-text-primary); margin: 0 0 4px; }
+  .detail-sub { font-size: 13px; color: var(--color-text-secondary); margin: 0 0 14px; }
+  .section-label { font-size: 11px; font-weight: 500; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: .05em; margin: 12px 0 6px; }
+  .topic-row { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 7px; font-size: 13px; color: var(--color-text-primary); line-height: 1.5; }
+  .topic-icon { color: var(--color-text-info); font-size: 14px; flex-shrink: 0; margin-top: 2px; }
+  .science-chip { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; padding: 4px 10px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-tertiary); margin: 3px 3px 3px 0; color: var(--color-text-secondary); }
+  .project-box { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 10px 12px; font-size: 13px; color: var(--color-text-primary); margin-top: 4px; }
+  .ask-btn { display: inline-flex; align-items: center; gap: 5px; font-size: 13px; padding: 7px 14px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-secondary); background: transparent; cursor: pointer; color: var(--color-text-primary); margin-top: 14px; }
+  .ask-btn:hover { background: var(--color-background-secondary); }
+  .pareto-banner { background: var(--color-background-secondary); border-left: 3px solid var(--color-border-info); border-radius: 0 var(--border-radius-md) var(--border-radius-md) 0; padding: 10px 14px; font-size: 13px; color: var(--color-text-primary); margin-bottom: 14px; line-height: 1.6; }
+  .science-row { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 6px; }
+  .progress-bar-wrap { height: 4px; background: var(--color-border-tertiary); border-radius: 2px; margin: 8px 0 4px; }
+  .progress-bar { height: 4px; border-radius: 2px; background: var(--color-text-info); transition: width .3s; }
+</style>
+
+<h2 class="sr-only">7-day .NET Core MVC science-based learning plan — 20% concepts for 80% production value</h2>
+
+<div class="pareto-banner">
+  <strong>Pareto principle applied:</strong> These 7 days focus on the ~20% of .NET Core MVC that covers ~80% of real production apps — routing, controllers, EF Core, auth, and deployment. Everything else builds on this foundation.
+</div>
+
+<div class="plan-grid" id="grid"></div>
+<div class="detail-card" id="detail"></div>
+
+<script>
+const days = [
+  {
+    label: "Day 1", short: "Foundations", badge: "core", type: "Core concept",
+    focus: "Mental model — how ASP.NET Core MVC works end-to-end",
+    science: ["Chunking", "Active recall"],
+    topics: [
+      "Request pipeline — middleware, Kestrel, IIS",
+      "MVC pattern: what each layer owns",
+      "Program.cs / Startup.cs — builder pattern",
+      "appsettings.json & environment configs",
+      "Your first controller + Razor view (scaffold it, read it, delete it)"
+    ],
+    project: "Create a blank MVC project. Trace one HTTP request through the debugger from browser → controller → view → response. Write the flow from memory.",
+    spaced: "Tonight: close your laptop and recall the 5 middleware steps without looking."
+  },
+  {
+    label: "Day 2", short: "Routing & Controllers", badge: "core", type: "Core concept",
+    focus: "The 80% routing patterns used in 99% of apps",
+    science: ["Interleaving", "Elaborative interrogation"],
+    topics: [
+      "Convention-based routing vs attribute routing",
+      "Route constraints and defaults",
+      "Action result types: View(), Json(), RedirectToAction()",
+      "Model binding — forms, query strings, route values",
+      "IActionFilter for cross-cutting concerns"
+    ],
+    project: "Build a ProductsController with Index, Details, Create (GET+POST). Use attribute routing. Add one filter.",
+    spaced: "Recall: how does model binding decide where to read values from?"
+  },
+  {
+    label: "Day 3", short: "EF Core & Data", badge: "build", type: "Build day",
+    focus: "Database access — the most production-critical 20%",
+    science: ["Worked examples", "Deliberate practice"],
+    topics: [
+      "DbContext + DbSet<T> setup",
+      "Code-first migrations (add-migration, update-database)",
+      "LINQ queries — Where, Select, Include for eager loading",
+      "Repository pattern (thin layer, not over-engineered)",
+      "Async/await with EF Core (ToListAsync, SaveChangesAsync)"
+    ],
+    project: "Wire your ProductsController to SQL Server (or SQLite). CRUD working end-to-end with real data. Run migrations.",
+    spaced: "Recall: what's the N+1 query problem? How does Include() solve it?"
+  },
+  {
+    label: "Day 4", short: "Forms & Validation", badge: "build", type: "Build day",
+    focus: "How real data flows from user → server → back",
+    science: ["Concrete examples", "Error analysis"],
+    topics: [
+      "Tag helpers: asp-for, asp-action, asp-controller",
+      "ViewModels vs domain models (why this matters)",
+      "DataAnnotations validation + ModelState.IsValid",
+      "Client-side validation (jquery.validate unobtrusive)",
+      "Anti-forgery tokens (CSRF protection)"
+    ],
+    project: "Add a full create/edit form with server+client validation. Break validation intentionally — see the errors, then fix them.",
+    spaced: "Why does the ViewModel pattern protect your database from over-posting attacks?"
+  },
+  {
+    label: "Day 5", short: "Auth & Identity", badge: "prod", type: "Production",
+    focus: "The auth layer every production app needs",
+    science: ["Spaced repetition", "Teaching effect"],
+    topics: [
+      "ASP.NET Core Identity setup (scaffold it)",
+      "[Authorize] attribute — role-based and policy-based",
+      "JWT tokens for API endpoints",
+      "Cookie authentication for MVC views",
+      "Claims-based identity — how to read user context"
+    ],
+    project: "Lock down your ProductsController — only logged-in users can create/edit. Add an Admin role that can delete.",
+    spaced: "Explain to a rubber duck: what's the difference between authentication and authorization?"
+  },
+  {
+    label: "Day 6", short: "APIs & DI", badge: "prod", type: "Production",
+    focus: "Dependency injection + clean architecture wiring",
+    science: ["Interleaving", "Retrieval practice"],
+    topics: [
+      "Dependency Injection — AddScoped, AddSingleton, AddTransient",
+      "ILogger<T> for structured logging",
+      "Web API controllers vs MVC controllers",
+      "Model validation with Problem Details (RFC 7807)",
+      "HttpClient + IHttpClientFactory for external calls"
+    ],
+    project: "Extract your data logic into a service. Register it with DI. Add a parallel API controller that returns JSON. Add logging.",
+    spaced: "Recall: when would you use Singleton vs Scoped? What breaks if you get it wrong?"
+  },
+  {
+    label: "Day 7", short: "Deploy & Harden", badge: "prod", type: "Production",
+    focus: "Ship it — production checklist every .NET dev needs",
+    science: ["Synthesis", "Project-based consolidation"],
+    topics: [
+      "Publish profiles — self-contained vs framework-dependent",
+      "Environment variables + secrets (dotnet user-secrets)",
+      "HTTPS, HSTS, and security headers middleware",
+      "Docker + Dockerfile for .NET MVC",
+      "Deploy to Azure App Service or a Linux VM (pick one)"
+    ],
+    project: "Deploy your product CRUD app to a real server. It should have HTTPS, auth, a database, and logging. Screenshot the working URL.",
+    spaced: "Full recall: draw the entire request lifecycle for a POST /products/create from browser to database and back."
+  }
+];
+
+const badgeLabel = { core: "Core concept", build: "Build day", prod: "Production" };
+let active = 0;
+
+function renderGrid() {
+  const g = document.getElementById('grid');
+  g.innerHTML = days.map((d, i) => `
+    <div class="day-card ${i === active ? 'active' : ''}" onclick="select(${i})">
+      <div class="day-label">${d.label}</div>
+      <div class="day-title">${d.short}</div>
+      <div class="day-badge badge-${d.badge}">${d.badge === 'core' ? '🧠' : d.badge === 'build' ? '🔨' : '🚀'} ${badgeLabel[d.badge]}</div>
+    </div>
+  `).join('');
+}
+
+function renderDetail(i) {
+  const d = days[i];
+  const progress = Math.round(((i + 1) / 7) * 100);
+  document.getElementById('detail').innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;flex-wrap:wrap">
+      <div>
+        <div class="detail-title">${d.label} — ${d.short}</div>
+        <div class="detail-sub">${d.focus}</div>
+      </div>
+      <span class="day-badge badge-${d.badge}" style="flex-shrink:0">${badgeLabel[d.badge]}</span>
+    </div>
+    <div class="progress-bar-wrap"><div class="progress-bar" style="width:${progress}%"></div></div>
+    <div style="font-size:11px;color:var(--color-text-secondary);margin-bottom:12px">Week progress: ${progress}%</div>
+
+    <div class="section-label"><i class="ti ti-book" aria-hidden="true"></i> What to learn today</div>
+    ${d.topics.map(t => `<div class="topic-row"><i class="ti ti-circle-check topic-icon" aria-hidden="true"></i><span>${t}</span></div>`).join('')}
+
+    <div class="section-label"><i class="ti ti-hammer" aria-hidden="true"></i> Build session (do this, don't just read)</div>
+    <div class="project-box">${d.project}</div>
+
+    <div class="section-label"><i class="ti ti-brain" aria-hidden="true"></i> Science technique</div>
+    <div class="science-row">
+      ${d.science.map(s => `<span class="science-chip"><i class="ti ti-flask" aria-hidden="true"></i>${s}</span>`).join('')}
+    </div>
+
+    <div class="section-label"><i class="ti ti-moon" aria-hidden="true"></i> Spaced retrieval (before bed)</div>
+    <div class="project-box">${d.spaced}</div>
+
+    <button class="ask-btn" onclick="sendPrompt('Give me a deep dive on Day ${i+1}: ${d.short} for .NET Core MVC')">
+      <i class="ti ti-arrow-up-right" aria-hidden="true"></i> Go deeper on this day ↗
+    </button>
+  `;
+}
+
+function select(i) {
+  active = i;
+  renderGrid();
+  renderDetail(i);
+}
+
+renderGrid();
+renderDetail(0);
+</script>
