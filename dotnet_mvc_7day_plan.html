@@ -1,197 +1,970 @@
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0a0a0f">
+<title>.NET MVC — 7-Day Sprint</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root { --gap: 10px; }
-  .plan-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: var(--gap); padding: 1rem 0; }
-  .day-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 10px 8px; cursor: pointer; transition: border-color .2s, background .15s; }
-  .day-card:hover { border-color: var(--color-border-primary); background: var(--color-background-secondary); }
-  .day-card.active { border: 1.5px solid var(--color-border-info); background: var(--color-background-info); }
-  .day-label { font-size: 11px; font-weight: 500; color: var(--color-text-secondary); margin-bottom: 4px; }
-  .day-title { font-size: 12px; font-weight: 500; color: var(--color-text-primary); line-height: 1.4; }
-  .day-badge { display: inline-block; font-size: 10px; padding: 2px 6px; border-radius: 10px; margin-top: 5px; }
-  .badge-core { background: var(--color-background-warning); color: var(--color-text-warning); }
-  .badge-build { background: var(--color-background-success); color: var(--color-text-success); }
-  .badge-prod { background: var(--color-background-danger); color: var(--color-text-danger); }
-  .detail-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1.25rem 1.5rem; margin-top: 12px; }
-  .detail-title { font-size: 16px; font-weight: 500; color: var(--color-text-primary); margin: 0 0 4px; }
-  .detail-sub { font-size: 13px; color: var(--color-text-secondary); margin: 0 0 14px; }
-  .section-label { font-size: 11px; font-weight: 500; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: .05em; margin: 12px 0 6px; }
-  .topic-row { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 7px; font-size: 13px; color: var(--color-text-primary); line-height: 1.5; }
-  .topic-icon { color: var(--color-text-info); font-size: 14px; flex-shrink: 0; margin-top: 2px; }
-  .science-chip { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; padding: 4px 10px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-tertiary); margin: 3px 3px 3px 0; color: var(--color-text-secondary); }
-  .project-box { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 10px 12px; font-size: 13px; color: var(--color-text-primary); margin-top: 4px; }
-  .ask-btn { display: inline-flex; align-items: center; gap: 5px; font-size: 13px; padding: 7px 14px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-secondary); background: transparent; cursor: pointer; color: var(--color-text-primary); margin-top: 14px; }
-  .ask-btn:hover { background: var(--color-background-secondary); }
-  .pareto-banner { background: var(--color-background-secondary); border-left: 3px solid var(--color-border-info); border-radius: 0 var(--border-radius-md) var(--border-radius-md) 0; padding: 10px 14px; font-size: 13px; color: var(--color-text-primary); margin-bottom: 14px; line-height: 1.6; }
-  .science-row { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 6px; }
-  .progress-bar-wrap { height: 4px; background: var(--color-border-tertiary); border-radius: 2px; margin: 8px 0 4px; }
-  .progress-bar { height: 4px; border-radius: 2px; background: var(--color-text-info); transition: width .3s; }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#0a0a0f;--bg3:#1a1a26;
+  --surface:#1e1e2e;--surface2:#252538;
+  --border:#2a2a40;--border2:#3a3a58;
+  --text:#e8e8f0;--text2:#9090b0;--text3:#5a5a7a;
+  --accent:#7c6af5;--accent2:#5a4de0;--glow:rgba(124,106,245,.18);
+  --green:#2dd4a0;--amber:#f5a623;--red:#f56262;--blue:#60a5fa;
+  --gbg:rgba(45,212,160,.1);--abg:rgba(245,166,35,.1);
+  --rbg:rgba(245,98,98,.1);--bbg:rgba(96,165,250,.1);
+  --r:14px;--rs:8px;
+}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;overflow:hidden}
+body{display:flex;flex-direction:column;max-width:430px;margin:0 auto}
+
+/* ── HEADER ── */
+.hdr{padding:12px 18px 10px;background:var(--bg);border-bottom:1px solid var(--border);flex-shrink:0}
+.hrow{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.logo{font-family:'Space Mono',monospace;font-size:11px;font-weight:700;color:var(--accent);letter-spacing:.05em}
+.wbadge{font-size:9px;background:var(--glow);color:var(--accent);border:1px solid rgba(124,106,245,.3);border-radius:20px;padding:3px 9px}
+.htitle{font-size:18px;font-weight:600;color:var(--text);margin-bottom:2px}
+.hsub{font-size:10px;color:var(--text2)}
+.pwrap{margin-top:9px}
+.prow{display:flex;justify-content:space-between;font-size:10px;color:var(--text3);margin-bottom:4px}
+.pt{height:3px;background:var(--border);border-radius:2px;overflow:hidden}
+.pf{height:100%;background:linear-gradient(90deg,var(--accent2),var(--accent));border-radius:2px;transition:width .5s}
+
+/* ── DAY TABS ── */
+.dtabs{display:flex;gap:6px;padding:9px 18px;overflow-x:auto;flex-shrink:0;background:var(--bg);scrollbar-width:none}
+.dtabs::-webkit-scrollbar{display:none}
+.dtab{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 10px;border-radius:var(--rs);border:1px solid var(--border);background:var(--surface);cursor:pointer;transition:all .2s;min-width:46px}
+.dtab:active{transform:scale(.95)}
+.dtab.on{background:var(--accent);border-color:var(--accent);box-shadow:0 0 14px var(--glow)}
+.dtab.done{border-color:var(--green);background:var(--gbg)}
+.dn{font-family:'Space Mono',monospace;font-size:11px;font-weight:700;color:var(--text2)}
+.dl{font-size:8px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;white-space:nowrap}
+.dtab.on .dn,.dtab.on .dl{color:#fff}
+.dtab.done .dn,.dtab.done .dl{color:var(--green)}
+
+/* ── VIEW TOGGLE ── */
+.vtabs{display:flex;margin:0 18px 12px;border-radius:var(--rs);background:var(--surface);border:1px solid var(--border);overflow:hidden}
+.vtab{flex:1;padding:8px 0;font-size:11px;font-weight:500;text-align:center;cursor:pointer;color:var(--text3);border:none;background:transparent;font-family:inherit;transition:all .2s}
+.vtab.on{background:var(--accent);color:#fff}
+
+/* ── SCROLL ── */
+.scroll{flex:1;overflow-y:auto;padding:0 0 88px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.scroll::-webkit-scrollbar{display:none}
+
+/* ── ANIMATIONS ── */
+@keyframes up{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.anim{animation:up .2s ease}
+
+/* ── HERO ── */
+.hero{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:11px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-28px;right:-28px;width:100px;height:100px;border-radius:50%;background:var(--glow);filter:blur(26px)}
+.htop{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.hlbl{font-family:'Space Mono',monospace;font-size:9px;color:var(--accent);font-weight:700;letter-spacing:.1em}
+.tb{font-size:9px;padding:2px 7px;border-radius:10px;font-weight:500}
+.bc{background:var(--abg);color:var(--amber);border:1px solid rgba(245,166,35,.25)}
+.bb{background:var(--gbg);color:var(--green);border:1px solid rgba(45,212,160,.25)}
+.bp{background:var(--rbg);color:var(--red);border:1px solid rgba(245,98,98,.25)}
+.bi{background:var(--bbg);color:var(--blue);border:1px solid rgba(96,165,250,.25)}
+.hti{font-size:18px;font-weight:600;color:var(--text);line-height:1.2;margin-bottom:4px}
+.hsu{font-size:11px;color:var(--text2);line-height:1.45}
+
+/* ── CARD ── */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:13px 15px;margin-bottom:10px}
+.chd{display:flex;align-items:center;gap:7px;margin-bottom:10px}
+.ci{width:24px;height:24px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+.ci1{background:rgba(124,106,245,.12)}.ci2{background:rgba(45,212,160,.12)}
+.ci3{background:rgba(245,166,35,.12)}.ci4{background:rgba(245,98,98,.12)}.ci5{background:rgba(96,165,250,.12)}
+.ct{font-size:12px;font-weight:600;color:var(--text)}
+
+/* ── TOPICS ── */
+.ti{display:flex;align-items:flex-start;gap:9px;padding:7px 0;border-bottom:1px solid var(--border);cursor:pointer;user-select:none}
+.ti:last-child{border-bottom:none;padding-bottom:0}.ti:first-child{padding-top:0}
+.tc{width:18px;height:18px;border-radius:5px;border:1.5px solid var(--border2);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s;margin-top:1px}
+.ti.on .tc{background:var(--accent);border-color:var(--accent)}
+.ti.on .tc::after{content:'✓';color:#fff;font-size:9px;font-weight:700}
+.tt{font-size:12px;color:var(--text2);line-height:1.5}
+.ti.on .tt{color:var(--text3);text-decoration:line-through}
+
+/* ── BOXES ── */
+.bbox{background:var(--bg3);border-radius:var(--rs);padding:11px 12px;font-size:12px;color:var(--text);line-height:1.6;border-left:3px solid var(--green)}
+.rbox{background:var(--bg3);border-radius:var(--rs);padding:11px 12px;font-size:12px;color:var(--text2);line-height:1.6;border-left:3px solid var(--red);font-style:italic}
+.chips{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px}
+.chip{font-size:10px;padding:3px 8px;border-radius:20px;background:var(--bg3);border:1px solid var(--border2);color:var(--text2)}
+.scinote{font-size:11px;color:var(--text3);line-height:1.6}
+
+/* ── API KEY GATE ── */
+.key-gate{display:flex;flex-direction:column;align-items:center;padding:24px 20px;gap:0}
+.key-icon{font-size:36px;margin-bottom:14px}
+.key-title{font-size:17px;font-weight:600;color:var(--text);margin-bottom:6px;text-align:center}
+.key-sub{font-size:12px;color:var(--text2);line-height:1.6;text-align:center;margin-bottom:18px}
+.key-link{display:inline-block;font-size:11px;color:var(--blue);background:var(--bbg);border:1px solid rgba(96,165,250,.25);border-radius:20px;padding:4px 12px;margin-bottom:16px;text-decoration:none}
+.key-input{width:100%;background:var(--surface);border:1px solid var(--border2);border-radius:var(--rs);padding:11px 14px;font-size:13px;color:var(--text);font-family:'Space Mono',monospace;outline:none;letter-spacing:.04em;margin-bottom:10px}
+.key-input:focus{border-color:var(--accent)}
+.key-input::placeholder{color:var(--text3);letter-spacing:0;font-family:'DM Sans',sans-serif}
+.key-btn{width:100%;padding:11px;border-radius:var(--rs);border:none;background:var(--accent);color:#fff;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit}
+.key-btn:active{transform:scale(.98)}
+.key-note{font-size:10px;color:var(--text3);margin-top:10px;text-align:center;line-height:1.5}
+.key-saved{font-size:11px;color:var(--green);margin-top:6px;display:none}
+
+/* ── STEPPER ── */
+.stepper{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:11px}
+.stop{display:flex;align-items:center;justify-content:space-between;margin-bottom:11px}
+.sdots{display:flex;gap:4px;flex-wrap:wrap}
+.sd{width:6px;height:6px;border-radius:50%;background:var(--border2);transition:background .2s;flex-shrink:0}
+.sd.a{background:var(--accent)}.sd.d{background:var(--green)}
+.scnt{font-size:10px;color:var(--text3);flex-shrink:0;margin-left:6px}
+.slbl{font-size:9px;font-weight:700;color:var(--accent);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
+.sname{font-size:14px;font-weight:600;color:var(--text);margin-bottom:8px;line-height:1.3}
+.sbody{font-size:12px;color:var(--text2);line-height:1.65;margin-bottom:10px}
+.scode{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--rs);padding:10px 12px;font-family:'Space Mono',monospace;font-size:10px;color:var(--text);line-height:1.7;overflow-x:auto;margin-bottom:10px;white-space:pre;display:block}
+.stip{font-size:11px;color:var(--text2);background:var(--bg3);border-left:2px solid var(--accent);padding:8px 10px;border-radius:0 4px 4px 0;line-height:1.55;margin-bottom:12px}
+.snav{display:flex;gap:7px}
+.snav button{flex:1;font-size:11px;padding:8px 0;border-radius:var(--rs);border:1px solid var(--border2);background:transparent;color:var(--text2);cursor:pointer;font-family:inherit;transition:all .15s}
+.snav button.pri{background:var(--accent);border-color:var(--accent);color:#fff}
+.snav button:disabled{opacity:.3;cursor:default}
+.dbuild{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:13px 15px}
+.dbtitle{font-size:10px;font-weight:700;color:var(--green);letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px}
+.dbbody{font-size:12px;color:var(--text2);line-height:1.65}
+
+/* ── LOADER / ERROR ── */
+.loader{display:flex;flex-direction:column;align-items:center;padding:52px 20px;gap:12px}
+.spin{width:28px;height:28px;border:2px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:rot .75s linear infinite}
+@keyframes rot{to{transform:rotate(360deg)}}
+.ltxt{font-size:12px;color:var(--text3);text-align:center;line-height:1.7}
+.ltxt strong{color:var(--text2)}
+.errbox{padding:36px 0;text-align:center;font-size:12px;color:var(--text3);line-height:1.7}
+.retbtn{margin-top:10px;display:inline-block;font-size:11px;padding:7px 16px;border-radius:var(--rs);border:1px solid var(--border2);background:transparent;color:var(--text2);cursor:pointer;font-family:inherit}
+
+/* ── INTERVIEW ── */
+.ivhero{background:linear-gradient(135deg,#1a1430,#0d1520);border:1px solid var(--border2);border-radius:var(--r);padding:16px;margin-bottom:12px;position:relative;overflow:hidden}
+.ivhero::before{content:'';position:absolute;top:-20px;right:-20px;width:100px;height:100px;border-radius:50%;background:rgba(96,165,250,.1);filter:blur(24px)}
+.ivtag{font-family:'Space Mono',monospace;font-size:9px;color:var(--blue);letter-spacing:.1em;font-weight:700;margin-bottom:5px}
+.ivh{font-size:19px;font-weight:600;color:var(--text);margin-bottom:4px}
+.ivs_{font-size:11px;color:var(--text2);line-height:1.5}
+.ivstats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.ivst{background:var(--surface);border:1px solid var(--border);border-radius:var(--rs);padding:10px;text-align:center}
+.ivsn{font-family:'Space Mono',monospace;font-size:18px;font-weight:700;color:var(--accent)}
+.ivsl{font-size:9px;color:var(--text3);margin-top:2px}
+.cattabs{display:flex;gap:5px;overflow-x:auto;margin-bottom:11px;scrollbar-width:none;padding-bottom:2px}
+.cattabs::-webkit-scrollbar{display:none}
+.ctab{flex-shrink:0;font-size:10px;padding:5px 11px;border-radius:20px;border:1px solid var(--border2);background:var(--surface);color:var(--text3);cursor:pointer;white-space:nowrap;font-family:inherit;transition:all .2s}
+.ctab.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.qcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);margin-bottom:9px;overflow:hidden;cursor:pointer}
+.qcard.open{border-color:var(--border2)}
+.qhd{padding:12px 14px;display:flex;align-items:flex-start;gap:9px}
+.qnum{font-family:'Space Mono',monospace;font-size:10px;color:var(--text3);flex-shrink:0;margin-top:1px}
+.qtx{font-size:12px;font-weight:500;color:var(--text);line-height:1.45;flex:1}
+.qmeta{display:flex;align-items:center;gap:5px;margin-top:4px;flex-wrap:wrap}
+.qlvl{font-size:9px;padding:2px 6px;border-radius:10px}
+.lb{background:var(--gbg);color:var(--green);border:1px solid rgba(45,212,160,.25)}
+.lm{background:var(--abg);color:var(--amber);border:1px solid rgba(245,166,35,.25)}
+.ls{background:var(--rbg);color:var(--red);border:1px solid rgba(245,98,98,.25)}
+.qchev{font-size:11px;color:var(--text3);transition:transform .25s;flex-shrink:0;margin-top:1px}
+.qcard.open .qchev{transform:rotate(180deg)}
+.qans{display:none;padding:0 14px 12px;border-top:1px solid var(--border)}
+.qcard.open .qans{display:block;animation:up .18s ease}
+.qab{font-size:12px;color:var(--text2);line-height:1.65;margin-top:10px}
+.qacode{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--rs);padding:10px;font-family:'Space Mono',monospace;font-size:10px;color:var(--text);line-height:1.65;overflow-x:auto;white-space:pre;margin:8px 0;display:block}
+.qtip{background:var(--bg3);border-left:2px solid var(--blue);padding:8px 10px;border-radius:0 4px 4px 0;font-size:11px;color:var(--text2);line-height:1.5;margin-top:8px}
+.qscen{background:rgba(96,165,250,.06);border:1px solid rgba(96,165,250,.2);border-radius:var(--rs);padding:8px 11px;font-size:11px;color:var(--blue);line-height:1.5;margin-bottom:8px}
+
+/* ── BUTTONS ── */
+.mbtns{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+.mbtn{width:100%;font-size:12px;padding:12px;border-radius:var(--rs);border:1px solid var(--border2);background:transparent;color:var(--text2);cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:7px;font-weight:500;transition:all .15s}
+.mbtn:active{transform:scale(.98)}
+.mbtn.pri{background:var(--blue);border-color:var(--blue);color:#fff}
+.mbtn.sec{background:var(--surface)}
+.backbtn{width:100%;font-size:11px;padding:9px;border-radius:var(--rs);border:1px solid var(--border2);background:transparent;color:var(--text3);cursor:pointer;font-family:inherit;margin-top:4px}
+
+/* ── QUIZ ── */
+.qwrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:10px}
+.qprog{display:flex;gap:4px;margin-bottom:12px;flex-wrap:wrap}
+.qpd{width:8px;height:8px;border-radius:50%;background:var(--border2);transition:background .2s}
+.qpd.ok{background:var(--green)}.qpd.no{background:var(--red)}.qpd.cur{background:var(--accent)}
+.qqtx{font-size:13px;font-weight:500;color:var(--text);line-height:1.5;margin-bottom:12px}
+.qopts{display:flex;flex-direction:column;gap:7px;margin-bottom:10px}
+.qopt{padding:10px 12px;border-radius:var(--rs);border:1px solid var(--border2);background:var(--bg3);font-size:12px;color:var(--text2);cursor:pointer;text-align:left;font-family:inherit;transition:all .2s;line-height:1.4}
+.qopt:active:not(:disabled){transform:scale(.98)}
+.qopt.ok{background:var(--gbg);border-color:var(--green);color:var(--green)}
+.qopt.no{background:var(--rbg);border-color:var(--red);color:var(--red)}
+.qopt.rev{background:var(--gbg);border-color:var(--green);color:var(--green)}
+.qfb{font-size:11px;line-height:1.6;padding:9px 11px;border-radius:var(--rs);background:var(--bg3);color:var(--text2);margin-bottom:10px;display:none}
+.qnxt{width:100%;font-size:12px;padding:10px;border-radius:var(--rs);border:none;background:var(--accent);color:#fff;cursor:pointer;font-family:inherit;font-weight:500;display:none}
+.qres{text-align:center;padding:10px 0}
+.qscore{font-family:'Space Mono',monospace;font-size:34px;font-weight:700;color:var(--accent);margin-bottom:5px}
+.qslbl{font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.5}
+
+/* ── OVERVIEW & SCIENCE ── */
+.owrap,.swrap{padding:14px 18px;animation:up .2s ease}
+.ogrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.ocard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:13px}
+.onum{font-family:'Space Mono',monospace;font-size:22px;font-weight:700;color:var(--accent)}
+.olbl{font-size:10px;color:var(--text3);margin-top:2px}
+.pareto{background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);padding:14px;margin-bottom:12px}
+.pt2{font-family:'Space Mono',monospace;font-size:9px;color:var(--accent);font-weight:700;letter-spacing:.1em;margin-bottom:6px}
+.ph2{font-size:18px;font-weight:600;color:var(--text);margin-bottom:4px}
+.pd2{font-size:11px;color:var(--text2);line-height:1.6}
+.stitle{font-size:16px;font-weight:600;color:var(--text);margin-bottom:2px}
+.ssub{font-size:11px;color:var(--text2);margin-bottom:13px;line-height:1.5}
+.scicard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:13px 15px;margin-bottom:8px}
+.sciname{font-size:13px;font-weight:600;color:var(--text);margin-bottom:3px}
+.scidesc{font-size:11px;color:var(--text2);line-height:1.6;margin-bottom:6px}
+.scitip{font-size:10px;color:var(--text3);background:var(--bg3);border-radius:var(--rs);padding:7px 10px;line-height:1.5}
+
+/* ── NAV ── */
+.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:rgba(10,10,15,.96);border-top:1px solid var(--border);display:flex;padding:6px 12px calc(6px + env(safe-area-inset-bottom));z-index:20;backdrop-filter:blur(20px)}
+.nb{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px;border-radius:var(--rs);cursor:pointer;border:none;background:transparent;color:var(--text3);font-family:inherit}
+.nb:active{transform:scale(.93)}
+.nb.on{color:var(--accent)}
+.ni{font-size:17px;line-height:1}
+.nl{font-size:9px;font-weight:500;letter-spacing:.04em}
+.hidden{display:none!important}
 </style>
+</head>
+<body>
 
-<h2 class="sr-only">7-day .NET Core MVC science-based learning plan — 20% concepts for 80% production value</h2>
-
-<div class="pareto-banner">
-  <strong>Pareto principle applied:</strong> These 7 days focus on the ~20% of .NET Core MVC that covers ~80% of real production apps — routing, controllers, EF Core, auth, and deployment. Everything else builds on this foundation.
+<!-- HEADER -->
+<div class="hdr">
+  <div class="hrow">
+    <div class="logo">.NET MVC SPRINT</div>
+    <div class="wbadge">7-Day · Interview Ready</div>
+  </div>
+  <div class="htitle">Learn .NET Core MVC</div>
+  <div class="hsub">20% concepts → 80% production · Science-backed · Interview-proof</div>
+  <div class="pwrap">
+    <div class="prow"><span id="plbl">0 of 7 days complete</span><span id="ppct">0%</span></div>
+    <div class="pt"><div class="pf" id="pf" style="width:0%"></div></div>
+  </div>
 </div>
 
-<div class="plan-grid" id="grid"></div>
-<div class="detail-card" id="detail"></div>
+<div class="scroll" id="scroll">
+
+  <!-- LEARN -->
+  <div id="s-learn" class="hidden">
+    <div class="dtabs" id="dtabs"></div>
+    <div class="vtabs">
+      <button class="vtab on" id="vt-plan" onclick="switchView('plan')">📋 Day Plan</button>
+      <button class="vtab" id="vt-dive" onclick="switchView('dive')">🔬 Deep Dive</button>
+    </div>
+    <div id="plan-c"></div>
+    <div id="dive-c" class="hidden"></div>
+  </div>
+
+  <!-- INTERVIEW -->
+  <div id="s-iv" class="hidden">
+    <div class="anim" style="padding:0 18px 14px">
+      <div class="ivhero">
+        <div class="ivtag">INTERVIEW PREP</div>
+        <div class="ivh">Ace the .NET Interview</div>
+        <div class="ivs_">42 real questions · Scenario-based · Junior → Senior</div>
+      </div>
+      <div class="ivstats">
+        <div class="ivst"><div class="ivsn">42</div><div class="ivsl">Questions</div></div>
+        <div class="ivst"><div class="ivsn" id="iv-rev">0</div><div class="ivsl">Reviewed</div></div>
+        <div class="ivst"><div class="ivsn" id="iv-qsc">—</div><div class="ivsl">Quiz Score</div></div>
+      </div>
+      <div id="iv-menu" class="mbtns">
+        <button class="mbtn pri" onclick="startQuiz()">⚡ Mock Quiz (10 Q)</button>
+        <button class="mbtn sec" onclick="openQBank()">📖 Browse Q&amp;A Bank</button>
+      </div>
+      <div id="iv-quiz" class="hidden"></div>
+      <div id="iv-qbank" class="hidden"></div>
+    </div>
+  </div>
+
+  <!-- OVERVIEW -->
+  <div id="s-ov" class="hidden">
+    <div class="owrap">
+      <div class="stitle">Week Overview</div>
+      <div class="ssub">Your 7-day sprint at a glance</div>
+      <div class="ogrid">
+        <div class="ocard"><div class="onum" id="ov-chk">0</div><div class="olbl">Topics checked</div></div>
+        <div class="ocard"><div class="onum" id="ov-days">0/7</div><div class="olbl">Days started</div></div>
+      </div>
+      <div class="pareto">
+        <div class="pt2">PARETO PRINCIPLE</div>
+        <div class="ph2">20% concepts → 80% of all apps</div>
+        <div class="pd2">Routing, EF Core, Auth, DI, Deployment. Every production .NET app uses these. Everything else builds on this foundation.</div>
+      </div>
+      <div id="ov-list"></div>
+    </div>
+  </div>
+
+  <!-- SCIENCE -->
+  <div id="s-sci" class="hidden">
+    <div class="swrap">
+      <div class="stitle">Learning Science</div>
+      <div class="ssub">Why this plan works</div>
+      <div class="scicard"><div class="sciname">🧠 Spaced Repetition</div><div class="scidesc">Review at increasing intervals. Each day ends with a recall prompt before sleep for maximum consolidation.</div><div class="scitip">💡 Sleep consolidates new neural pathways. The recall prompt before bed is the most important 2 minutes of each day.</div></div>
+      <div class="scicard"><div class="sciname">⚡ Retrieval Practice</div><div class="scidesc">Trying to recall — even struggling — strengthens memory far more than re-reading.</div><div class="scitip">💡 Sit with the struggle for 60 seconds before looking up an answer. The struggle IS the learning.</div></div>
+      <div class="scicard"><div class="sciname">🔀 Interleaving</div><div class="scidesc">Mixing topics feels harder but produces much stronger long-term retention than mastering one topic before moving on.</div><div class="scitip">💡 Days 3–4 mix EF Core and UI concepts on purpose. Discomfort = signal it's working.</div></div>
+      <div class="scicard"><div class="sciname">🏗️ Elaborative Interrogation</div><div class="scidesc">"Why does X work this way?" connects new knowledge to existing knowledge, building richer mental models.</div><div class="scitip">💡 Ask: how does this connect to something I already know? That connection becomes the memory hook.</div></div>
+      <div class="scicard"><div class="sciname">🔨 Deliberate Practice</div><div class="scidesc">Each day has a build session that forces production output — including intentionally making and fixing errors.</div><div class="scitip">💡 You learn faster from fixing a bug than from following a tutorial.</div></div>
+      <div class="scicard"><div class="sciname">🧩 Chunking</div><div class="scidesc">Day 1 builds the master chunk — the request lifecycle — that every future concept hangs off.</div><div class="scitip">💡 Trace one HTTP request in the debugger on Day 1. That chunk is the backbone of everything.</div></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- NAV -->
+<div class="nav">
+  <button class="nb on" id="n-learn" onclick="showScreen('learn')"><div class="ni">📚</div><div class="nl">Learn</div></button>
+  <button class="nb" id="n-iv" onclick="showScreen('iv')"><div class="ni">🎯</div><div class="nl">Interview</div></button>
+  <button class="nb" id="n-ov" onclick="showScreen('ov')"><div class="ni">🗓</div><div class="nl">Overview</div></button>
+  <button class="nb" id="n-sci" onclick="showScreen('sci')"><div class="ni">🔬</div><div class="nl">Science</div></button>
+</div>
 
 <script>
-const days = [
-  {
-    label: "Day 1", short: "Foundations", badge: "core", type: "Core concept",
-    focus: "Mental model — how ASP.NET Core MVC works end-to-end",
-    science: ["Chunking", "Active recall"],
-    topics: [
-      "Request pipeline — middleware, Kestrel, IIS",
-      "MVC pattern: what each layer owns",
-      "Program.cs / Startup.cs — builder pattern",
-      "appsettings.json & environment configs",
-      "Your first controller + Razor view (scaffold it, read it, delete it)"
-    ],
-    project: "Create a blank MVC project. Trace one HTTP request through the debugger from browser → controller → view → response. Write the flow from memory.",
-    spaced: "Tonight: close your laptop and recall the 5 middleware steps without looking."
-  },
-  {
-    label: "Day 2", short: "Routing & Controllers", badge: "core", type: "Core concept",
-    focus: "The 80% routing patterns used in 99% of apps",
-    science: ["Interleaving", "Elaborative interrogation"],
-    topics: [
-      "Convention-based routing vs attribute routing",
-      "Route constraints and defaults",
-      "Action result types: View(), Json(), RedirectToAction()",
-      "Model binding — forms, query strings, route values",
-      "IActionFilter for cross-cutting concerns"
-    ],
-    project: "Build a ProductsController with Index, Details, Create (GET+POST). Use attribute routing. Add one filter.",
-    spaced: "Recall: how does model binding decide where to read values from?"
-  },
-  {
-    label: "Day 3", short: "EF Core & Data", badge: "build", type: "Build day",
-    focus: "Database access — the most production-critical 20%",
-    science: ["Worked examples", "Deliberate practice"],
-    topics: [
-      "DbContext + DbSet<T> setup",
-      "Code-first migrations (add-migration, update-database)",
-      "LINQ queries — Where, Select, Include for eager loading",
-      "Repository pattern (thin layer, not over-engineered)",
-      "Async/await with EF Core (ToListAsync, SaveChangesAsync)"
-    ],
-    project: "Wire your ProductsController to SQL Server (or SQLite). CRUD working end-to-end with real data. Run migrations.",
-    spaced: "Recall: what's the N+1 query problem? How does Include() solve it?"
-  },
-  {
-    label: "Day 4", short: "Forms & Validation", badge: "build", type: "Build day",
-    focus: "How real data flows from user → server → back",
-    science: ["Concrete examples", "Error analysis"],
-    topics: [
-      "Tag helpers: asp-for, asp-action, asp-controller",
-      "ViewModels vs domain models (why this matters)",
-      "DataAnnotations validation + ModelState.IsValid",
-      "Client-side validation (jquery.validate unobtrusive)",
-      "Anti-forgery tokens (CSRF protection)"
-    ],
-    project: "Add a full create/edit form with server+client validation. Break validation intentionally — see the errors, then fix them.",
-    spaced: "Why does the ViewModel pattern protect your database from over-posting attacks?"
-  },
-  {
-    label: "Day 5", short: "Auth & Identity", badge: "prod", type: "Production",
-    focus: "The auth layer every production app needs",
-    science: ["Spaced repetition", "Teaching effect"],
-    topics: [
-      "ASP.NET Core Identity setup (scaffold it)",
-      "[Authorize] attribute — role-based and policy-based",
-      "JWT tokens for API endpoints",
-      "Cookie authentication for MVC views",
-      "Claims-based identity — how to read user context"
-    ],
-    project: "Lock down your ProductsController — only logged-in users can create/edit. Add an Admin role that can delete.",
-    spaced: "Explain to a rubber duck: what's the difference between authentication and authorization?"
-  },
-  {
-    label: "Day 6", short: "APIs & DI", badge: "prod", type: "Production",
-    focus: "Dependency injection + clean architecture wiring",
-    science: ["Interleaving", "Retrieval practice"],
-    topics: [
-      "Dependency Injection — AddScoped, AddSingleton, AddTransient",
-      "ILogger<T> for structured logging",
-      "Web API controllers vs MVC controllers",
-      "Model validation with Problem Details (RFC 7807)",
-      "HttpClient + IHttpClientFactory for external calls"
-    ],
-    project: "Extract your data logic into a service. Register it with DI. Add a parallel API controller that returns JSON. Add logging.",
-    spaced: "Recall: when would you use Singleton vs Scoped? What breaks if you get it wrong?"
-  },
-  {
-    label: "Day 7", short: "Deploy & Harden", badge: "prod", type: "Production",
-    focus: "Ship it — production checklist every .NET dev needs",
-    science: ["Synthesis", "Project-based consolidation"],
-    topics: [
-      "Publish profiles — self-contained vs framework-dependent",
-      "Environment variables + secrets (dotnet user-secrets)",
-      "HTTPS, HSTS, and security headers middleware",
-      "Docker + Dockerfile for .NET MVC",
-      "Deploy to Azure App Service or a Linux VM (pick one)"
-    ],
-    project: "Deploy your product CRUD app to a real server. It should have HTTPS, auth, a database, and logging. Screenshot the working URL.",
-    spaced: "Full recall: draw the entire request lifecycle for a POST /products/create from browser to database and back."
-  }
+/* ═══════════ PLAN DATA ═══════════ */
+const DAYS=[
+  {s:"Foundations",b:"c",f:"Mental model — how ASP.NET Core MVC works end-to-end",sci:["Chunking","Active Recall"],sn:"Build the master chunk today. Everything else in the week hangs off it.",topics:["Request pipeline — middleware, Kestrel, IIS","MVC pattern: what each layer owns","Program.cs / Startup.cs — builder pattern","appsettings.json & environment configs","Your first controller + Razor view (scaffold, read, delete)"],proj:"Create a blank MVC project. Set a breakpoint and trace one request: browser → middleware → controller → view → response. Write the full flow from memory after.",spaced:"Recall the 6 middleware stages in order without notes. Write them on paper before sleeping."},
+  {s:"Routing & Controllers",b:"c",f:"The 80% routing patterns used in 99% of production apps",sci:["Interleaving","Elaborative Interrogation"],sn:"Mix conventions and attribute routing — confusion is the learning signal.",topics:["Convention-based vs attribute routing","Route constraints and defaults","Action results: View(), Json(), RedirectToAction()","Model binding — forms, query strings, route values","IActionFilter for cross-cutting concerns"],proj:"Build ProductsController: Index, Details, Create GET+POST with attribute routing. Add an IActionFilter logging execution time. Test model binding from different sources.",spaced:"Recall: how does model binding decide where to read values from? Write the priority order without looking."},
+  {s:"EF Core & Data",b:"b",f:"Database access — the most production-critical 20%",sci:["Worked Examples","Deliberate Practice"],sn:"Work a full example first, then build from scratch. Type it — don't copy.",topics:["DbContext + DbSet&lt;T&gt; setup","Code-first migrations (add-migration, update-database)","LINQ: Where, Select, Include for eager loading","Async/await — ToListAsync, SaveChangesAsync","Repository pattern — thin service layer"],proj:"Wire ProductsController to SQLite. Full CRUD with real data. Intentionally trigger N+1 (loop + lazy loading) — observe the SQL — fix with Include(). Run migrations.",spaced:"Recall: what is N+1? How does Include() fix it? What SQL does it generate?"},
+  {s:"Forms & Validation",b:"b",f:"How real data flows from user → server → database and back",sci:["Concrete Examples","Error Analysis"],sn:"Break validation intentionally. Analysing errors is faster than tutorials.",topics:["Tag helpers: asp-for, asp-action, asp-controller","ViewModel pattern — prevents over-posting","DataAnnotations: [Required], [StringLength], [Range]","ModelState.IsValid + client-side validation","Anti-forgery tokens (CSRF protection)"],proj:"Add create/edit form with server+client validation. Submit invalid data — see errors — fix them. Remove [ValidateAntiForgeryToken] and observe what breaks. Restore it.",spaced:"Why does ViewModel protect against over-posting? Explain in 2 sentences to a junior dev."},
+  {s:"Auth & Identity",b:"p",f:"The auth layer every production app needs",sci:["Spaced Repetition","Teaching Effect"],sn:"After learning this, explain it aloud to a rubber duck. Teaching forces clarity.",topics:["ASP.NET Core Identity — scaffold and understand","[Authorize] — role-based vs policy-based","JWT tokens for API endpoints","Cookie auth for MVC views","Claims-based identity — HttpContext.User"],proj:"Lock ProductsController: logged-in users create/edit; Admin only can delete. Test logout/login redirects. Add one custom claim to the identity.",spaced:"Explain auth vs authorization. What is a Claim? What is a ClaimsPrincipal? No notes."},
+  {s:"APIs & DI",b:"p",f:"Clean architecture wiring — DI, logging, APIs",sci:["Interleaving","Retrieval Practice"],sn:"Interleave DI and API concepts — the mix builds stronger connections.",topics:["DI lifetimes: AddScoped, AddSingleton, AddTransient — what breaks","ILogger&lt;T&gt; for structured logging","Web API vs MVC controllers — [ApiController]","Problem Details (RFC 7807) error responses","IHttpClientFactory for external HTTP calls"],proj:"Extract ProductService behind IProductService. Register Scoped. Add /api/products API controller. Wire ILogger. Inject Scoped into Singleton — observe the crash.",spaced:"Recall: when does Singleton break with Scoped? What is the captive dependency problem?"},
+  {s:"Deploy & Harden",b:"p",f:"Ship it — production checklist every .NET dev needs",sci:["Synthesis","Project Consolidation"],sn:"Day 7 is synthesis. Connect everything into one deployable artifact.",topics:["Publish profiles: self-contained vs framework-dependent","Secrets: user-secrets locally, env vars in production","HTTPS, HSTS, security headers middleware","Docker + multi-stage Dockerfile for .NET MVC","Deploy to Azure App Service or Linux VM (Nginx)"],proj:"Dockerize and deploy your product app: HTTPS, auth, SQLite/Postgres, structured logging, env-var config. Screenshot the live URL.",spaced:"Draw the full request lifecycle for POST /products/create: browser → middleware → controller → EF Core → response. No notes."}
 ];
 
-const badgeLabel = { core: "Core concept", build: "Build day", prod: "Production" };
-let active = 0;
+/* ═══════════ INTERVIEW Q&A ═══════════ */
+const IVQ=[
+  {cat:"Fundamentals",lvl:"basic",q:".NET Framework vs .NET Core — key differences?",a:".NET Framework is Windows-only and in maintenance mode. .NET Core (now .NET 6+) is cross-platform, open-source, faster, and modular. All new development should target .NET 6+. The 'Core' suffix was dropped at .NET 5 but the architecture remains.",code:null,tip:"Mention that .NET Framework isn't deprecated — it's supported but gets no new features. All innovation is in .NET 6+. This shows commercial awareness."},
+  {cat:"Fundamentals",lvl:"basic",q:"Explain MVC architecture in ASP.NET Core.",a:"MVC separates concerns into three layers: Model owns data and business rules (knows nothing about HTTP); View handles rendering only — zero business logic; Controller is the traffic cop — receives requests, calls services, returns IActionResult. Fat controllers are the #1 .NET code smell.",code:`public class ProductsController : Controller {
+    private readonly IProductService _svc;
+    public ProductsController(IProductService svc) => _svc = svc;
+    public async Task<IActionResult> Index()
+        => View(await _svc.GetAllAsync()); // thin controller
+}`,tip:"Interviewers ask: 'how fat should a controller be?' — answer: under 20 lines per action, all logic lives in injected services."},
+  {cat:"Fundamentals",lvl:"basic",q:"What is the role of Program.cs?",a:"Program.cs is the app entry point. Two strict phases: Phase 1 registers services (builder.Services.*). Phase 2 configures the middleware pipeline (app.Use*). You cannot add services after builder.Build() is called.",code:`var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddControllersWithViews(); // Phase 1
+var app = builder.Build();
+app.UseHttpsRedirection();    // Phase 2
+app.UseAuthentication();      // order matters!
+app.UseAuthorization();
+app.MapControllerRoute("default", "{controller=Home}/{action=Index}");
+app.Run();`,tip:"Middleware ORDER is law. UseAuthentication() must come before UseAuthorization(). This is the #1 interview trap — most candidates get it wrong."},
+  {cat:"Fundamentals",lvl:"basic",q:"What is Kestrel and when do you use IIS?",a:"Kestrel is the built-in cross-platform web server. In production on Windows, IIS sits in front as a reverse proxy handling SSL and process management. On Linux, Nginx plays that role. Kestrel always runs internally — never exposed directly to the internet.",code:null,tip:"Gotcha: Kestrel alone is fine for Docker/cloud. IIS/Nginx add SSL termination, load balancing, and process resurrection — not raw performance."},
+  {cat:"Fundamentals",lvl:"basic",q:"What are the types of Action Results?",a:"IActionResult implementations: ViewResult (Razor HTML), JsonResult (JSON), RedirectToActionResult (302), ContentResult (raw string), NotFound/StatusCodeResult, FileResult (downloads), and ActionResult&lt;T&gt; for typed API responses that preserve types for Swagger.",code:`public IActionResult Get(int id) {
+    var p = _svc.Find(id);
+    if (p == null) return NotFound();    // 404
+    return View(p);                      // or Json(p)
+}`,tip:"Use ActionResult<T> in API controllers — it preserves the response type for OpenAPI/Swagger generation. Juniors use IActionResult everywhere."},
+  {cat:"Middleware",lvl:"basic",q:"What is middleware and how does it work?",a:"Middleware is a component in the request pipeline that handles or passes the request via next(). Each runs code BEFORE next() (on the way in) and AFTER next() returns (on the way out). They form a bidirectional chain.",code:`app.Use(async (context, next) => {
+    // ↓ way IN
+    var sw = Stopwatch.StartNew();
+    await next(context);
+    // ↑ way OUT — response is being written
+    Console.WriteLine($"Elapsed: {sw.ElapsedMilliseconds}ms");
+});`,tip:"UseExceptionHandler() must be first — it wraps the whole chain in try/catch. UseStaticFiles() short-circuits early so CSS/JS never reaches controllers."},
+  {cat:"Middleware",lvl:"mid",q:"Difference between app.Use(), app.Run(), app.Map()?",a:"Use() calls next() and passes control forward. Run() is terminal — never calls next(), ends the pipeline. Map() branches the pipeline for a URL prefix, creating a sub-pipeline.",code:`app.Use(async (ctx, next) => { await next(ctx); }); // passes on
+app.Map("/admin", admin => {                          // branch
+    admin.Run(async ctx => await ctx.Response.WriteAsync("Admin"));
+});
+app.Run(async ctx =>                                  // terminal fallback
+    await ctx.Response.WriteAsync("Default"));`,tip:"Gotcha: anything registered AFTER app.Run() is dead code — it never executes. Run() is a pipeline dead end."},
+  {cat:"Middleware",lvl:"mid",q:"App returns 500s in production, works locally. What middleware differences do you check?",scenario:"Production 500 errors, works in Development.",a:"1) UseDeveloperExceptionPage() must NEVER run in production — it leaks stack traces. 2) Check middleware order — UseAuthentication() after UseAuthorization() causes silent auth failures. 3) HTTPS redirect loops if SSL isn't terminated properly by the reverse proxy.",code:`if (app.Environment.IsDevelopment())
+    app.UseDeveloperExceptionPage();
+else
+    app.UseExceptionHandler(\"/Home/Error\");`,tip:"Also check: is ASPNETCORE_ENVIRONMENT set to 'Production' on the server? Many teams forget this and run development middleware in production."},
+  {cat:"Dependency Injection",lvl:"basic",q:"Explain AddSingleton, AddScoped, AddTransient.",a:"Transient: new instance every time it's requested — for stateless lightweight services. Scoped: one instance per HTTP request — for DbContext, repositories. Singleton: one instance for the app lifetime — for caches, HttpClient. Getting it wrong causes serious bugs.",code:`builder.Services.AddTransient<IEmailFormatter, EmailFormatter>();
+builder.Services.AddScoped<IProductRepo, ProductRepo>();
+builder.Services.AddSingleton<ICacheService, MemoryCache>();`,tip:"Interview trap: a Singleton capturing a Scoped service = 'captive dependency'. The Scoped instance gets frozen at startup and never refreshed. Extremely common real-world bug."},
+  {cat:"Dependency Injection",lvl:"mid",q:"You inject IProductRepository (Scoped) into a BackgroundService (Singleton). What happens?",scenario:"Scoped service injected into Singleton HostedService.",a:"The Scoped DbContext gets captured at startup and reused forever — it will hold stale data, eventually throw, or corrupt state. Fix: inject IServiceScopeFactory and create a new scope per operation.",code:`public class OrderWorker : BackgroundService {
+    private readonly IServiceScopeFactory _f;
+    public OrderWorker(IServiceScopeFactory f) => _f = f;
+    protected override async Task ExecuteAsync(CancellationToken ct) {
+        while (!ct.IsCancellationRequested) {
+            using var scope = _f.CreateScope();
+            var repo = scope.ServiceProvider
+                .GetRequiredService<IProductRepo>();
+            await repo.ProcessAsync();
+            await Task.Delay(30_000, ct);
+        }
+    }
+}`,tip:"Knowing IServiceScopeFactory is a senior signal. This is a top-10 interview question. Most juniors don't know why their HostedService crashes after 24 hours."},
+  {cat:"EF Core",lvl:"basic",q:"What is the N+1 query problem and how do you fix it?",a:"N+1 happens when you load a list (1 query) then access a navigation property per item in a loop (N extra queries). Fix: use Include() to eagerly load related entities in a single JOIN.",code:`// BAD — 1 + N queries
+var orders = await _db.Orders.ToListAsync();
+foreach (var o in orders)
+    Console.WriteLine(o.Customer.Name); // N lazy queries!
 
-function renderGrid() {
-  const g = document.getElementById('grid');
-  g.innerHTML = days.map((d, i) => `
-    <div class="day-card ${i === active ? 'active' : ''}" onclick="select(${i})">
-      <div class="day-label">${d.label}</div>
-      <div class="day-title">${d.short}</div>
-      <div class="day-badge badge-${d.badge}">${d.badge === 'core' ? '🧠' : d.badge === 'build' ? '🔨' : '🚀'} ${badgeLabel[d.badge]}</div>
-    </div>
-  `).join('');
+// GOOD — single JOIN
+var orders = await _db.Orders
+    .Include(o => o.Customer)
+    .ToListAsync();`,tip:"The diagnostic step matters: 'I saw 201 queries for 200 records in SQL Profiler/EF logging' signals real production experience. Just saying 'add Include' sounds like guesswork."},
+  {cat:"EF Core",lvl:"basic",q:"Code-first vs database-first — when to use each?",a:"Code-first: write C# classes, EF generates migrations and the schema. Modern default — migrations are version-controlled in git. Database-first: existing database, scaffold models using 'dotnet ef dbcontext scaffold'. Use database-first when inheriting legacy databases you can't change.",code:`// Code-first commands
+dotnet ef migrations add InitialCreate
+dotnet ef database update`,tip:"Migrations are 'version control for your database'. Each has Up() and Down() methods — they're reversible. Always commit migration files to source control."},
+  {cat:"EF Core",lvl:"mid",q:"EF Core query is slow in production. Walk me through diagnosis.",scenario:"Slow EF Core query.",a:"1) Enable SQL logging (LogTo) to see the actual SQL. 2) Check for N+1 (missing Include). 3) Check for SELECT * — use .Select() projection. 4) Check for missing index on filtered columns. 5) Add .AsNoTracking() for read-only queries — ~30% overhead saving.",code:`var products = await _db.Products
+    .AsNoTracking()                     // skip change tracking
+    .Where(p => p.CategoryId == id)
+    .Select(p => new { p.Id, p.Name }) // project only needed cols
+    .ToListAsync();`,tip:"AsNoTracking() is the simplest EF Core performance win. Interviewers love it because it shows deep framework knowledge, not just surface API usage."},
+  {cat:"EF Core",lvl:"mid",q:"What lifetime should DbContext be registered as, and why?",a:"Always Scoped — one per HTTP request. Never Singleton (not thread-safe — concurrent requests corrupt state). Never Transient (multiple contexts per request cause change-tracking conflicts).",code:`builder.Services.AddDbContext<AppDbContext>(opts =>
+    opts.UseSqlite("Data Source=app.db")
+        .LogTo(Console.WriteLine, LogLevel.Warning));`,tip:"If DbContext is Singleton, concurrent requests share it — DbContext is NOT thread-safe. This causes random, unreproducible data corruption in production."},
+  {cat:"Routing",lvl:"basic",q:"Convention-based vs attribute routing — when to use each?",a:"Convention routing is defined once as a template in Program.cs — all controllers follow it. Attribute routing uses [Route] and [HttpGet/Post] per action — explicit, per-endpoint. Convention suits MVC apps with views; attribute suits REST APIs where URLs are part of the contract.",code:`[Route("api/[controller]")]
+public class ProductsController : ControllerBase {
+    [HttpGet("{id:int}")]  // constraint: must be int → 404 if not
+    public IActionResult Get(int id) => Ok(_svc.Get(id));
+}`,tip:"Route constraints ({id:int}, {slug:alpha}) are free validation — they return 404 automatically. Use them instead of manual if(id <= 0) checks."},
+  {cat:"Routing",lvl:"mid",q:"What is model binding and what is the source priority order?",a:"Model binding automatically maps request data to action parameters. Priority order: [FromRoute] → [FromQuery] → [FromBody] → [FromHeader] → [FromForm]. [FromBody] can only be used once — the request stream is consumed on first read.",code:`public IActionResult Create(
+    [FromRoute] int categoryId,
+    [FromBody] CreateProductDto dto,
+    [FromHeader(Name = "X-Api-Key")] string key)`,tip:"Gotcha: [FromBody] consumes the request stream once. Reading the body twice (e.g. in middleware AND in a controller) returns empty on the second read. Use Request.EnableBuffering() to fix."},
+  {cat:"Auth & Security",lvl:"basic",q:"Authentication vs Authorization — explain the difference.",a:"Authentication = who you are (proving identity). Authorization = what you're allowed to do. UseAuthentication() reads cookie/JWT and sets HttpContext.User. UseAuthorization() checks permissions. They must be in this order.",code:`app.UseAuthentication(); // sets HttpContext.User
+app.UseAuthorization();  // checks [Authorize] attributes
+
+[Authorize(Roles = "Admin")]
+public IActionResult Delete(int id) { ... }`,tip:"Swapping the order (Authorization before Authentication) lets unauthenticated requests slip through [Authorize] silently. This is the single most common auth bug."},
+  {cat:"Auth & Security",lvl:"mid",q:"How do you implement JWT authentication?",a:"Register JWT Bearer in services with signing key and validation params. Generate a token on login with claims (userId, roles). Client sends it in Authorization header as 'Bearer {token}'. ASP.NET Core validates signature and expiry automatically.",code:`builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+  .AddJwtBearer(o => {
+    o.TokenValidationParameters = new() {
+      ValidateIssuerSigningKey = true,
+      IssuerSigningKey = new SymmetricSecurityKey(
+          Encoding.UTF8.GetBytes(config["Jwt:Secret"])),
+      ValidateIssuer = false,
+      ValidateAudience = false
+    };
+  });`,tip:"NEVER store JWT secrets in appsettings.json committed to git. Use environment variables or Azure Key Vault. This is the #1 security vulnerability in .NET APIs."},
+  {cat:"Auth & Security",lvl:"mid",q:"What is CSRF and how does ASP.NET Core prevent it?",a:"CSRF tricks a logged-in user's browser into making unwanted requests by exploiting automatic cookie sending. ASP.NET Core prevents it with anti-forgery tokens — a hidden form field that must match a server-side cookie.",code:`// asp-action tag helper adds the hidden token automatically
+<form asp-action="Create">
+    <input asp-for="Name" />
+    <button type="submit">Save</button>
+</form>
+
+[HttpPost, ValidateAntiForgeryToken]
+public IActionResult Create(ProductVm vm) { ... }`,tip:"JWT APIs are not CSRF-vulnerable — browsers don't auto-send JWTs like cookies. CSRF only matters for cookie-authenticated MVC apps."},
+  {cat:"Auth & Security",lvl:"senior",q:"A user's JWT was stolen. How do you invalidate it before expiry?",scenario:"Stolen JWT — must invalidate before natural expiry.",a:"JWTs are stateless — you can't delete them. Solutions: 1) Short expiry (15 min) + refresh tokens in DB (can be revoked). 2) Token blacklist in Redis — check every request (adds latency). 3) Token versioning — store version per user, increment on logout, reject old versions.",code:`// Token version check per request
+var storedVer = await _cache.GetStringAsync($"tv:{userId}");
+var tokenVer  = user.FindFirst("tv")?.Value;
+if (tokenVer != storedVer) return Unauthorized();`,tip:"This is a senior question. The correct first sentence is: 'JWTs are stateless BY DESIGN — they can't truly be invalidated without extra state.' That alone separates seniors from juniors."},
+  {cat:"Filters",lvl:"mid",q:"What are Action Filters and what are the filter types?",a:"Filters run code before/after pipeline stages. Execution order: 1) Authorization, 2) Resource, 3) Action (before/after action method), 4) Exception, 5) Result. Register globally to apply to all controllers without attributes.",code:`public class TimingFilter : IActionFilter {
+    public void OnActionExecuting(ActionExecutingContext c)
+        => c.HttpContext.Items["t"] = Stopwatch.GetTimestamp();
+    public void OnActionExecuted(ActionExecutedContext c) {
+        var ms = Stopwatch.GetElapsedTime(
+            (long)c.HttpContext.Items["t"]!).TotalMilliseconds;
+        c.HttpContext.Response.Headers["X-Elapsed"] = $"{ms:F0}ms";
+    }
+}`,tip:"Register globally: builder.Services.AddControllersWithViews(o => o.Filters.Add<TimingFilter>()). No [TimingFilter] attribute needed on every controller."},
+  {cat:"Views & Data",lvl:"basic",q:"ViewData vs ViewBag vs TempData?",a:"ViewData (dictionary) and ViewBag (dynamic wrapper over ViewData) are both available only for the current request. TempData persists for exactly one additional request — stored in session or cookie — ideal for Post-Redirect-Get patterns.",code:`TempData["Msg"] = "Saved!";
+return RedirectToAction("Index"); // redirect
+
+// In view (after redirect — TempData survives one hop)
+@if(TempData["Msg"] != null) {
+    <div class="alert">@TempData["Msg"]</div>
+}`,tip:"Always prefer strongly-typed ViewModels over ViewData/ViewBag — they give IntelliSense, compile-time checks, and are far easier to test."},
+  {cat:"Views & Data",lvl:"basic",q:"What is a ViewModel and why use it instead of domain models?",a:"A ViewModel is a class designed specifically for the view containing only the data it needs. Using domain models directly risks over-posting attacks — a user can submit extra fields like IsAdmin=true and they'll be bound and saved.",code:`// Domain model — DON'T expose directly in forms
+public class User { public int Id; public string Name; public bool IsAdmin; }
+
+// ViewModel — only what the form needs
+public class EditUserVm {
+    [Required] public string Name { get; set; }
+    // IsAdmin absent — cannot be over-posted
+}`,tip:"Over-posting is a real attack vector. ViewModel is a security boundary, not just a UI pattern. Name it that way in interviews."},
+  {cat:"Performance",lvl:"mid",q:"How do you implement caching in ASP.NET Core?",a:"Three levels: IMemoryCache — in-process, single server, fastest. IDistributedCache (Redis) — shared across servers, required for load-balanced apps. Response caching — [ResponseCache] caches the HTTP response itself.",code:`builder.Services.AddMemoryCache();
+
+// In service:
+if (!_cache.TryGetValue("products", out List<Product> list)) {
+    list = await _db.Products.AsNoTracking().ToListAsync();
+    _cache.Set("products", list, TimeSpan.FromMinutes(5));
+}`,tip:"IMemoryCache is per-process. On Azure App Service with multiple instances, each server has its own cache. Use Redis (AddStackExchangeRedisCache) for multi-instance deployments."},
+  {cat:"Performance",lvl:"senior",q:"API returns 200 products but SQL Profiler shows 201 queries. What's the bug?",scenario:"200 products, 201 queries in profiler.",a:"Classic N+1. 1 query loads products, then accessing a navigation property in a loop fires 200 lazy-load queries. Fix: .Include() for eager loading (single JOIN), or .Select() projection to avoid loading the navigation property at all.",code:`// BUG — lazy loading in loop
+var ps = await _db.Products.ToListAsync();
+var names = ps.Select(p => p.Category.Name); // 200 lazy queries!
+
+// FIX — eager loading (1 JOIN)
+var ps = await _db.Products
+    .Include(p => p.Category)
+    .ToListAsync();`,tip:"The diagnostic framing wins interviews: 'I observed 201 queries for 200 rows in SQL Profiler/EF logging'. The diagnosis process, not just the fix, is what impresses."},
+  {cat:"Async",lvl:"mid",q:"Task.Result vs await — key risk of Task.Result?",a:"await releases the calling thread back to the pool while waiting. Task.Result blocks the current thread synchronously. In ASP.NET Core this can deadlock — the blocked thread is needed to resume the async continuation.",code:`// BAD — can deadlock in ASP.NET Core
+var result = _svc.GetAsync().Result; // blocks thread!
+
+// GOOD — releases thread while waiting
+var result = await _svc.GetAsync();`,tip:"ASP.NET Core is async all the way down. Never mix sync and async with .Result or .Wait(). The deadlock pattern: .Result blocks a thread that's needed for the async continuation."},
+  {cat:"Async",lvl:"mid",q:"When should you NOT use async/await?",a:"Don't use async for CPU-bound work — the thread is busy computing, not waiting, so async adds no benefit. For CPU-bound work, use Task.Run() to offload to the thread pool. Async helps only for I/O-bound operations: DB, HTTP, file I/O.",code:`// CPU-bound → Task.Run (offloads to thread pool)
+public async Task<byte[]> HashAsync(byte[] data)
+    => await Task.Run(() => SHA256.HashData(data));
+
+// I/O-bound → async natively (no Task.Run needed)
+public async Task<List<Product>> GetAsync()
+    => await _db.Products.ToListAsync();`,tip:"A junior says 'always use async'. A senior says 'only for I/O-bound work'. Wrapping synchronous CPU work in async without Task.Run adds overhead with zero benefit."},
+  {cat:"Testing",lvl:"mid",q:"How do you unit test an ASP.NET Core controller?",a:"Inject mock dependencies using Moq. Call the action method directly — no HTTP involved. Assert on the returned IActionResult type and value. Use WebApplicationFactory for integration tests covering the full HTTP pipeline.",code:`[Fact]
+public async Task Index_ReturnsView_WithProducts() {
+    var mock = new Mock<IProductService>();
+    mock.Setup(s => s.GetAllAsync())
+        .ReturnsAsync(new List<Product> { new() { Name = "Test" } });
+    var ctrl = new ProductsController(mock.Object);
+
+    var result = await ctrl.Index();
+
+    var view = Assert.IsType<ViewResult>(result);
+    Assert.Single(Assert.IsAssignableFrom<List<Product>>(view.Model));
+}`,tip:"Know the difference: unit tests cover controller logic in isolation; WebApplicationFactory integration tests cover routing, middleware, and auth. Name both in interviews."},
+  {cat:"Architecture",lvl:"senior",q:"Repository pattern — when would you NOT use it with EF Core?",a:"Repository abstracts data access for testability. When NOT to use it: EF Core's DbContext is already a unit of work and DbSet&lt;T&gt; is already a repository. An extra wrapper adds boilerplate without value unless you need to swap data sources or test without a real DB.",code:`// Fine for most apps — service uses DbContext directly
+public class ProductService : IProductService {
+    private readonly AppDbContext _db;
+    public async Task<List<Product>> GetAllAsync()
+        => await _db.Products.AsNoTracking().ToListAsync();
+}`,tip:"'I don't always add Repository — EF Core already implements it' is a strong senior answer. Blindly adding repositories is a tutorial habit, not a production pattern."},
+  {cat:"Architecture",lvl:"senior",q:"Minimal API vs MVC controllers — when to use each?",a:"Minimal API (introduced .NET 6) defines endpoints directly in Program.cs — lower overhead, ideal for microservices. MVC controllers suit complex apps needing filters, model binding, Razor views, and conventional structure.",code:`// Minimal API — no controller
+app.MapGet("/api/products",
+    async (AppDbContext db) =>
+        await db.Products.AsNoTracking().ToListAsync());
+
+app.MapPost("/api/products",
+    async (CreateProductDto dto, AppDbContext db) => {
+        db.Products.Add(new Product { Name = dto.Name });
+        await db.SaveChangesAsync();
+        return Results.Created("/api/products", dto);
+    });`,tip:"Know both. MVC for full apps with views; Minimal API for lightweight services. The hybrid — Minimal API + some MVC — is increasingly common in 2025 production codebases."},
+  {cat:"Misc",lvl:"basic",q:"What is Razor and what does @ do?",a:"Razor is the server-side templating engine for embedding C# in HTML. @ escapes into C#: @Model.Name outputs a value (HTML-encoded, XSS-safe). @{ } is a code block. @model at the top declares the view's model type for strong typing.",code:`@model List<Product>
+<h1>@Model.Count products</h1>
+@foreach (var p in Model) {
+    <p>@p.Name — @p.Price.ToString("C")</p>
+}`,tip:"Razor HTML-encodes all @ output automatically — preventing XSS. @Html.Raw() bypasses encoding and is dangerous. Only use it with content you fully own and trust."},
+  {cat:"Misc",lvl:"mid",q:"ViewComponent vs Partial View?",a:"Partial View is a reusable Razor snippet sharing the parent view's model — no independent logic. ViewComponent has its own C# class with Invoke() that can query data independently — ideal for self-contained widgets like a cart badge or notification count.",code:`public class CartBadge : ViewComponent {
+    public async Task<IViewComponentResult> InvokeAsync()
+        => View(await _cartSvc.GetCountAsync(User));
+}
+// In Razor:
+@await Component.InvokeAsync("CartBadge")`,tip:"ViewComponents are not affected by the parent controller's filters. This is a common senior differentiator question — most juniors have never used them."},
+  {cat:"Misc",lvl:"mid",q:"What is IHostedService and BackgroundService?",a:"IHostedService allows long-running background tasks that start/stop with the app. BackgroundService is an abstract base class with a continuous ExecuteAsync loop. Use for queue consumers, scheduled jobs, health pollers.",code:`public class OrderProcessor : BackgroundService {
+    protected override async Task ExecuteAsync(CancellationToken ct) {
+        while (!ct.IsCancellationRequested) {
+            await ProcessNextAsync();
+            await Task.Delay(30_000, ct);
+        }
+    }
+}
+builder.Services.AddHostedService<OrderProcessor>();`,tip:"Always pass and respect CancellationToken in ExecuteAsync. Ignoring it means the service won't stop cleanly during deployment — causing hanging pods in Kubernetes."},
+  {cat:"Misc",lvl:"mid",q:"IExceptionFilter vs middleware exception handling?",a:"IExceptionFilter catches exceptions only within MVC (controller actions, filters) and has access to ActionContext. UseExceptionHandler() middleware catches ALL exceptions across the whole pipeline including routing and static files.",code:`app.UseExceptionHandler("/Home/Error"); // catches everything
+
+// API-specific structured error response
+public class ApiErrorFilter : IExceptionFilter {
+    public void OnException(ExceptionContext c) {
+        c.Result = new ObjectResult(new ProblemDetails {
+            Status = 500, Title = "Server Error",
+            Detail = c.Exception.Message }) { StatusCode = 500 };
+        c.ExceptionHandled = true;
+    }
+}`,tip:"Production: have both. UseExceptionHandler() as the safety net + an IExceptionFilter on API controllers to return structured Problem Details (RFC 7807) instead of HTML error pages."}
+];
+
+/* ═══════════ QUIZ DATA ═══════════ */
+const QUIZ=[
+  {q:"Middleware order: which must come BEFORE UseAuthorization()?",opts:["UseRouting()","UseAuthentication()","UseEndpoints()","UseStaticFiles()"],ans:1,exp:"UseAuthentication() sets HttpContext.User. Without it first, UseAuthorization() has no identity to check — [Authorize] silently passes everyone through."},
+  {q:"Injecting a Scoped service into a Singleton is called a ___?",opts:["Service collision","Captive dependency","Circular dependency","Lifetime mismatch"],ans:1,exp:"Captive dependency: the Scoped service is captured by the Singleton and never refreshed, causing stale DbContext data and threading bugs."},
+  {q:"200 products loaded, SQL Profiler shows 201 queries. What is the bug?",opts:["Missing index","N+1 query problem","Connection pool exhausted","Deadlock"],ans:1,exp:"N+1: 1 query for products + 200 lazy-load queries for a navigation property in a loop. Fix with .Include() eager loading."},
+  {q:"Which lifetime should DbContext always be registered as?",opts:["Transient","Singleton","Scoped","Pooled Singleton"],ans:2,exp:"Scoped = one DbContext per request. Singleton = thread-safety bugs. Transient = change-tracking conflicts with multiple contexts per request."},
+  {q:"[ValidateAntiForgeryToken] protects against which attack?",opts:["SQL Injection","XSS","CSRF","JWT theft"],ans:2,exp:"CSRF tricks a logged-in browser into sending unwanted requests. The anti-forgery token is a hidden field that must match a server-side cookie."},
+  {q:"What is the key risk of calling Task.Result in ASP.NET Core?",opts:["It's slower","It can cause a deadlock","It skips middleware","It doesn't support generics"],ans:1,exp:"Task.Result blocks the current thread. If that thread is needed to resume the async continuation, you get a deadlock. Always await instead."},
+  {q:"Which EF Core method reduces read-only query overhead by ~30%?",opts:[".AsReadOnly()",".DetachAll()",".AsNoTracking()",".SkipTracking()"],ans:2,exp:".AsNoTracking() tells EF to skip change-tracking for returned entities — significant savings on read-heavy endpoints like lists."},
+  {q:"What is the correct role of a Controller in MVC?",opts:["Contains business logic","Manages DB connections","Routes requests, calls services, returns results","Renders HTML"],ans:2,exp:"Controllers are traffic cops — receive request, call injected service (which has the logic), return a result. Fat controllers are the #1 .NET code smell."},
+  {q:"Which handles exceptions OUTSIDE the MVC pipeline?",opts:["IExceptionFilter","try/catch in controllers","UseExceptionHandler() middleware","[HandleError]"],ans:2,exp:"UseExceptionHandler() is placed first in the pipeline and catches ALL exceptions — including routing and static file errors outside MVC."},
+  {q:"How do you safely invalidate a stolen JWT before expiry?",opts:["Call jwt.revoke()","Delete it from the cookie","Short expiry + refresh token revocation or token versioning","Set expiry to 0"],ans:2,exp:"JWTs are stateless — they can't be deleted server-side. Short expiry + revocable refresh tokens, or a per-user token version checked on every request."}
+];
+
+/* ═══════════ STATE ═══════════ */
+let curDay=0, curScreen='learn', curView='plan';
+let checks={}, ivReviewed=[], lastScore='—', activeCat='All';
+let qIdx=0, qAns=[];
+const dCache={}, sIdx={};
+
+try{checks=JSON.parse(localStorage.getItem('nc_c')||'{}');}catch(e){}
+try{ivReviewed=JSON.parse(localStorage.getItem('nc_iv')||'[]');}catch(e){}
+try{lastScore=localStorage.getItem('nc_qs')||'—';}catch(e){}
+
+// Gemini API key
+let GKEY='';
+try{GKEY=localStorage.getItem('nc_gk')||'';}catch(e){}
+
+function save(){
+  try{
+    localStorage.setItem('nc_c',JSON.stringify(checks));
+    localStorage.setItem('nc_iv',JSON.stringify(ivReviewed));
+  }catch(e){}
+}
+function gc(d,i){return!!checks[d+'_'+i]}
+function sc(d,i,v){checks[d+'_'+i]=v;save()}
+function totChk(){return Object.values(checks).filter(Boolean).length}
+function daysSt(){let s=0;DAYS.forEach((_,di)=>{for(let i=0;i<DAYS[di].topics.length;i++){if(checks[di+'_'+i]){s++;break;}}});return s}
+function compDays(){return DAYS.filter((d,di)=>d.topics.every((_,ti)=>checks[di+'_'+ti])).length}
+function eh(s){if(!s)return'';return String(s).replace(/&(?!amp;|lt;|gt;)/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+
+/* ── BADGE HELPERS ── */
+const BCL={c:'bc',b:'bb',p:'bp'};
+const BTYP={c:'Core Concept',b:'Build Day',p:'Production'};
+
+/* ── PROGRESS ── */
+function updateProg(){
+  const d=compDays(),p=Math.round((d/7)*100);
+  document.getElementById('pf').style.width=p+'%';
+  document.getElementById('plbl').textContent=d+' of 7 days complete';
+  document.getElementById('ppct').textContent=p+'%';
+  const e1=document.getElementById('ov-chk'),e2=document.getElementById('ov-days');
+  const e3=document.getElementById('iv-rev'),e4=document.getElementById('iv-qsc');
+  if(e1)e1.textContent=totChk();
+  if(e2)e2.textContent=daysSt()+'/7';
+  if(e3)e3.textContent=ivReviewed.length;
+  if(e4)e4.textContent=lastScore;
 }
 
-function renderDetail(i) {
-  const d = days[i];
-  const progress = Math.round(((i + 1) / 7) * 100);
-  document.getElementById('detail').innerHTML = `
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;flex-wrap:wrap">
-      <div>
-        <div class="detail-title">${d.label} — ${d.short}</div>
-        <div class="detail-sub">${d.focus}</div>
+/* ── DAY TABS ── */
+function renderTabs(){
+  document.getElementById('dtabs').innerHTML=DAYS.map((d,i)=>{
+    let c='dtab';
+    if(i===curDay)c+=' on';
+    else if(d.topics.every((_,ti)=>checks[i+'_'+ti]))c+=' done';
+    return`<div class="${c}" onclick="selDay(${i})"><div class="dn">D${i+1}</div><div class="dl">${d.s.split(' ')[0]}</div></div>`;
+  }).join('');
+}
+
+/* ── PLAN ── */
+function renderPlan(d,di){
+  const chips=d.sci.map(s=>`<span class="chip">${s}</span>`).join('');
+  const topics=d.topics.map((t,ti)=>`
+    <div class="ti ${gc(di,ti)?'on':''}" onclick="togChk(${di},${ti},this)">
+      <div class="tc"></div><div class="tt">${t}</div>
+    </div>`).join('');
+  return`<div class="anim" style="padding:0 18px 14px">
+    <div class="hero">
+      <div class="htop"><div class="hlbl">DAY ${di+1} · 7-DAY SPRINT</div><div class="tb ${BCL[d.b]}">${BTYP[d.b]}</div></div>
+      <div class="hti">${d.s}</div><div class="hsu">${d.f}</div>
+    </div>
+    <div class="card"><div class="chd"><div class="ci ci1">📖</div><div class="ct">What to learn today</div></div>${topics}</div>
+    <div class="card"><div class="chd"><div class="ci ci2">🔨</div><div class="ct">Build session</div></div><div class="bbox">${d.proj}</div></div>
+    <div class="card"><div class="chd"><div class="ci ci3">🧬</div><div class="ct">Science techniques</div></div><div class="chips">${chips}</div><div class="scinote">${d.sn}</div></div>
+    <div class="card"><div class="chd"><div class="ci ci4">🌙</div><div class="ct">Spaced retrieval — before bed</div></div><div class="rbox">${d.spaced}</div></div>
+  </div>`;
+}
+
+function togChk(di,ti,el){
+  const v=!gc(di,ti);sc(di,ti,v);
+  el.classList.toggle('on',v);updateProg();renderTabs();
+}
+
+function selDay(i){
+  curDay=i;renderTabs();
+  document.getElementById('scroll').scrollTop=0;
+  if(curView==='plan')document.getElementById('plan-c').innerHTML=renderPlan(DAYS[i],i);
+  else loadDive(i);
+}
+
+function switchView(v){
+  curView=v;
+  document.getElementById('vt-plan').classList.toggle('on',v==='plan');
+  document.getElementById('vt-dive').classList.toggle('on',v==='dive');
+  document.getElementById('plan-c').classList.toggle('hidden',v!=='plan');
+  document.getElementById('dive-c').classList.toggle('hidden',v!=='dive');
+  document.getElementById('scroll').scrollTop=0;
+  if(v==='plan')document.getElementById('plan-c').innerHTML=renderPlan(DAYS[curDay],curDay);
+  else loadDive(curDay);
+}
+
+/* ── DEEP DIVE — Gemini 2.5 Flash ── */
+async function callGemini(prompt){
+  const url=`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GKEY}`;
+  const res=await fetch(url,{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({contents:[{parts:[{text:prompt}]}]})
+  });
+  if(!res.ok){
+    const err=await res.json().catch(()=>({}));
+    throw new Error((err.error&&err.error.message)||'HTTP '+res.status);
+  }
+  const data=await res.json();
+  const text=data?.candidates?.[0]?.content?.parts?.[0]?.text;
+  if(!text)throw new Error('Empty response from Gemini');
+  return text;
+}
+
+function showKeyGate(di){
+  const el=document.getElementById('dive-c');
+  el.innerHTML=`<div style="padding:0 18px 14px">
+    <div class="key-gate">
+      <div class="key-icon">🔑</div>
+      <div class="key-title">Gemini API Key Required</div>
+      <div class="key-sub">Deep Dive uses Google's Gemini 2.5 Flash — free tier, no credit card needed. Get your key in 30 seconds at Google AI Studio.</div>
+      <a class="key-link" href="https://aistudio.google.com/app/apikey" target="_blank">→ Get free key at aistudio.google.com</a>
+      <input class="key-input" id="keyinput" type="password" placeholder="Paste your AIza... key here" autocomplete="off" spellcheck="false">
+      <button class="key-btn" onclick="saveKey(${di})">Save Key &amp; Load Deep Dive</button>
+      <div class="key-note">Your key is stored only in this browser (localStorage).<br>Never shared, never sent anywhere except Google's API.</div>
+      <div class="key-saved" id="key-saved">✓ Key saved!</div>
+    </div>
+  </div>`;
+}
+
+function saveKey(di){
+  const k=(document.getElementById('keyinput').value||'').trim();
+  if(!k.startsWith('AIza')){
+    alert('That doesn\'t look like a valid Gemini key. It should start with "AIza".');
+    return;
+  }
+  GKEY=k;
+  try{localStorage.setItem('nc_gk',k);}catch(e){}
+  document.getElementById('key-saved').style.display='block';
+  setTimeout(()=>loadDive(di),600);
+}
+
+async function loadDive(di){
+  const el=document.getElementById('dive-c');
+  // no key → show gate
+  if(!GKEY){showKeyGate(di);return;}
+  // cached
+  if(dCache[di]){el.innerHTML=dCache[di];return;}
+  const d=DAYS[di];
+  el.innerHTML=`<div style="padding:0 18px"><div class="loader">
+    <div class="spin"></div>
+    <div class="ltxt">Generating deep dive for<br><strong>${d.s}</strong>…<br>
+    <span style="font-size:10px;margin-top:4px;display:block">Gemini 2.5 Flash · Free tier</span></div>
+  </div></div>`;
+  const prompt=`You are a senior .NET Core MVC engineer writing a concise mobile deep-dive for Day ${di+1}: "${d.s}".
+Cover these topics:
+${d.topics.map((t,i)=>`${i+1}. ${t}`).join('\n')}
+
+Return ONLY a valid JSON object. No markdown fences, no extra text, no explanation. Start with { and end with }.
+Schema:
+{
+  "topics": [
+    {
+      "title": "max 5 words",
+      "body": "2 plain-prose sentences, max 45 words, no bullet points",
+      "code": "real C# snippet 4-7 lines. Use \\n for newlines.",
+      "tip": "one insight starting with 'Production:' or 'Gotcha:'"
+    }
+  ],
+  "buildNote": "2 sentences: what the build session teaches and why it matters in production"
+}`;
+  try{
+    const raw=await callGemini(prompt);
+    const s=raw.indexOf('{'), e=raw.lastIndexOf('}');
+    if(s===-1||e===-1)throw new Error('No JSON in response');
+    const parsed=JSON.parse(raw.slice(s,e+1));
+    if(!Array.isArray(parsed.topics)||parsed.topics.length===0)throw new Error('Bad structure');
+    sIdx[di]=0;
+    const html=buildDiveHTML(parsed,di);
+    dCache[di]=html;el.innerHTML=html;
+    renderStep(di,parsed.topics);
+  }catch(err){
+    console.error('Dive error:',err);
+    const isAuth=err.message&&(err.message.includes('API_KEY')||err.message.includes('403')||err.message.includes('401'));
+    el.innerHTML=`<div style="padding:0 18px"><div class="errbox">
+      ${isAuth?'Invalid API key. <button class="retbtn" onclick="GKEY=\'\';localStorage.removeItem(\'nc_gk\');showKeyGate('+di+')">Re-enter Key</button>':'Failed to generate deep dive.<br>'+eh(err.message)}
+      <br><button class="retbtn" style="margin-top:10px" onclick="delete dCache[${di}];loadDive(${di})">↺ Retry</button>
+    </div></div>`;
+  }
+}
+
+function buildDiveHTML(p,di){
+  const d=DAYS[di];
+  const tj=JSON.stringify(p.topics).replace(/</g,'\\u003c').replace(/>/g,'\\u003e').replace(/\//g,'\\/');
+  return`<div style="padding:0 18px 14px;animation:up .2s ease">
+    <div class="hero" style="margin-bottom:11px">
+      <div class="htop"><div class="hlbl">DAY ${di+1} · DEEP DIVE</div><div class="tb ${BCL[d.b]}">${BTYP[d.b]}</div></div>
+      <div class="hti">${d.s}</div><div class="hsu">${d.f}</div>
+    </div>
+    <div class="stepper" id="st-${di}">
+      <div class="stop"><div class="sdots" id="sd-${di}"></div><div class="scnt" id="sc-${di}"></div></div>
+      <div id="ss-${di}"></div>
+      <div class="snav">
+        <button id="sp-${di}" onclick="moveStep(${di},-1)" disabled>← Prev</button>
+        <button id="sn-${di}" onclick="moveStep(${di},1)" class="pri">Next →</button>
       </div>
-      <span class="day-badge badge-${d.badge}" style="flex-shrink:0">${badgeLabel[d.badge]}</span>
     </div>
-    <div class="progress-bar-wrap"><div class="progress-bar" style="width:${progress}%"></div></div>
-    <div style="font-size:11px;color:var(--color-text-secondary);margin-bottom:12px">Week progress: ${progress}%</div>
-
-    <div class="section-label"><i class="ti ti-book" aria-hidden="true"></i> What to learn today</div>
-    ${d.topics.map(t => `<div class="topic-row"><i class="ti ti-circle-check topic-icon" aria-hidden="true"></i><span>${t}</span></div>`).join('')}
-
-    <div class="section-label"><i class="ti ti-hammer" aria-hidden="true"></i> Build session (do this, don't just read)</div>
-    <div class="project-box">${d.project}</div>
-
-    <div class="section-label"><i class="ti ti-brain" aria-hidden="true"></i> Science technique</div>
-    <div class="science-row">
-      ${d.science.map(s => `<span class="science-chip"><i class="ti ti-flask" aria-hidden="true"></i>${s}</span>`).join('')}
-    </div>
-
-    <div class="section-label"><i class="ti ti-moon" aria-hidden="true"></i> Spaced retrieval (before bed)</div>
-    <div class="project-box">${d.spaced}</div>
-
-    <button class="ask-btn" onclick="sendPrompt('Give me a deep dive on Day ${i+1}: ${d.short} for .NET Core MVC')">
-      <i class="ti ti-arrow-up-right" aria-hidden="true"></i> Go deeper on this day ↗
-    </button>
-  `;
+    <div class="dbuild"><div class="dbtitle">🔨 Why this build session matters</div><div class="dbbody">${eh(p.buildNote)}</div></div>
+    <button class="retbtn" style="margin-top:10px;width:100%;text-align:center" onclick="GKEY='';localStorage.removeItem('nc_gk');delete dCache[${di}];showKeyGate(${di})">⚙ Change API Key</button>
+    <script>window.__t${di}=${tj};<\/script>
+  </div>`;
 }
 
-function select(i) {
-  active = i;
-  renderGrid();
-  renderDetail(i);
+function renderStep(di,topics){
+  if(!topics)topics=window['__t'+di];if(!topics)return;
+  const cur=sIdx[di]||0,s=topics[cur];
+  const de=document.getElementById('sd-'+di),ce=document.getElementById('sc-'+di);
+  const se=document.getElementById('ss-'+di),pb=document.getElementById('sp-'+di),nb=document.getElementById('sn-'+di);
+  if(!de||!se)return;
+  de.innerHTML=topics.map((_,i)=>`<div class="sd ${i===cur?'a':i<cur?'d':''}"></div>`).join('');
+  ce.textContent=`${cur+1} / ${topics.length}`;
+  se.innerHTML=`<div class="slbl">Topic ${cur+1} of ${topics.length}</div>
+    <div class="sname">${eh(s.title)}</div>
+    <div class="sbody">${eh(s.body)}</div>
+    <code class="scode">${eh(s.code)}</code>
+    <div class="stip">${eh(s.tip)}</div>`;
+  pb.disabled=(cur===0);
+  if(cur===topics.length-1){nb.textContent='Done ✓';nb.classList.remove('pri');}
+  else{nb.textContent='Next →';nb.classList.add('pri');}
 }
 
-renderGrid();
-renderDetail(0);
+function moveStep(di,dir){
+  const t=window['__t'+di];if(!t)return;
+  sIdx[di]=Math.max(0,Math.min(t.length-1,(sIdx[di]||0)+dir));
+  renderStep(di,t);
+}
+
+/* ── INTERVIEW ── */
+const ALLCATS=['All',...new Set(IVQ.map(q=>q.cat))];
+
+function openQBank(){
+  document.getElementById('iv-menu').classList.add('hidden');
+  document.getElementById('iv-quiz').classList.add('hidden');
+  document.getElementById('iv-qbank').classList.remove('hidden');
+  renderQBank();
+}
+
+function renderQBank(){
+  const el=document.getElementById('iv-qbank');
+  const filtered=activeCat==='All'?IVQ:IVQ.filter(q=>q.cat===activeCat);
+  const catH=ALLCATS.map(c=>`<button class="ctab ${c===activeCat?'on':''}" onclick="setCat('${c}')">${c}</button>`).join('');
+  const qH=filtered.map(q=>{
+    const ri=IVQ.indexOf(q);
+    const seen=ivReviewed.includes(ri);
+    const lc={basic:'lb',mid:'lm',senior:'ls'}[q.lvl]||'lb';
+    return`<div class="qcard" id="qc-${ri}" onclick="togQ(${ri},this)">
+      <div class="qhd">
+        <div class="qnum">${String(ri+1).padStart(2,'0')}</div>
+        <div style="flex:1">
+          <div class="qtx">${q.q}</div>
+          <div class="qmeta">
+            <span class="qlvl ${lc}">${q.lvl}</span>
+            <span style="font-size:9px;color:var(--text3)">${q.cat}</span>
+            ${seen?'<span style="font-size:9px;color:var(--green)">✓ reviewed</span>':''}
+          </div>
+        </div>
+        <div class="qchev">▾</div>
+      </div>
+      <div class="qans">
+        ${q.scenario?`<div class="qscen">📋 ${q.scenario}</div>`:''}
+        <div class="qab">${q.a}</div>
+        ${q.code?`<code class="qacode">${eh(q.code)}</code>`:''}
+        ${q.tip?`<div class="qtip">💡 ${q.tip}</div>`:''}
+      </div>
+    </div>`;
+  }).join('');
+  el.innerHTML=`<div class="cattabs">${catH}</div>${qH}
+    <button class="backbtn" onclick="backMenu()">← Back to Menu</button>`;
+}
+
+function setCat(c){activeCat=c;renderQBank()}
+
+function togQ(idx,card){
+  card.classList.toggle('open');
+  if(!ivReviewed.includes(idx)){
+    ivReviewed.push(idx);
+    try{localStorage.setItem('nc_iv',JSON.stringify(ivReviewed));}catch(e){}
+    updateProg();
+    const meta=card.querySelector('.qmeta');
+    if(meta&&!meta.querySelector('.rvd')){
+      const b=document.createElement('span');
+      b.className='rvd';b.style.cssText='font-size:9px;color:var(--green)';
+      b.textContent='✓ reviewed';meta.appendChild(b);
+    }
+  }
+}
+
+function backMenu(){
+  document.getElementById('iv-qbank').classList.add('hidden');
+  document.getElementById('iv-quiz').classList.add('hidden');
+  document.getElementById('iv-menu').classList.remove('hidden');
+  updateProg();
+}
+
+/* ── QUIZ ── */
+function startQuiz(){
+  document.getElementById('iv-menu').classList.add('hidden');
+  qIdx=0;qAns=[];renderQuiz();
+  document.getElementById('iv-quiz').classList.remove('hidden');
+}
+
+function renderQuiz(){
+  const el=document.getElementById('iv-quiz');
+  if(qIdx>=QUIZ.length){
+    const score=qAns.filter(Boolean).length,pct=Math.round((score/QUIZ.length)*100);
+    lastScore=score+'/'+QUIZ.length;
+    try{localStorage.setItem('nc_qs',lastScore);}catch(e){}
+    updateProg();
+    const msg=pct>=80?'Excellent! Interview-ready. 🎉':pct>=60?'Good progress. Review your misses.':'Keep studying — revisit the Q&A bank.';
+    const dots=qAns.map(a=>`<div class="qpd ${a?'ok':'no'}"></div>`).join('');
+    el.innerHTML=`<div class="qwrap"><div class="qres">
+      <div class="qscore">${score}/${QUIZ.length}</div>
+      <div class="qslbl">${msg}</div>
+      <div class="qprog" style="justify-content:center">${dots}</div>
+    </div></div>
+    <button class="mbtn pri" onclick="startQuiz()" style="margin-top:8px">↺ Retake Quiz</button>
+    <button class="mbtn sec" onclick="backMenu()">← Back to Menu</button>`;
+    return;
+  }
+  const q=QUIZ[qIdx];
+  const dots=QUIZ.map((_,i)=>`<div class="qpd ${i<qIdx?(qAns[i]?'ok':'no'):i===qIdx?'cur':''}"></div>`).join('');
+  const opts=q.opts.map((o,i)=>`<button class="qopt" id="qo${i}" onclick="ansQ(${i})">${o}</button>`).join('');
+  el.innerHTML=`<div class="qwrap">
+    <div class="qprog">${dots}</div>
+    <div class="qqtx">Q${qIdx+1} of ${QUIZ.length}<br><br>${q.q}</div>
+    <div class="qopts">${opts}</div>
+    <div class="qfb" id="qfb"></div>
+    <button class="qnxt" id="qnxt" onclick="nxtQ()">${qIdx===QUIZ.length-1?'See Results →':'Next →'}</button>
+  </div>`;
+}
+
+function ansQ(c){
+  const q=QUIZ[qIdx],ok=c===q.ans;qAns.push(ok);
+  document.querySelectorAll('.qopt').forEach((b,i)=>{
+    b.disabled=true;
+    if(i===q.ans)b.classList.add('rev');
+    else if(i===c&&!ok)b.classList.add('no');
+  });
+  const fb=document.getElementById('qfb');
+  fb.style.display='block';
+  fb.innerHTML=`<strong style="color:${ok?'var(--green)':'var(--red)'}">${ok?'✓ Correct!':'✗ Incorrect.'}</strong> ${q.exp}`;
+  document.getElementById('qnxt').style.display='block';
+}
+
+function nxtQ(){qIdx++;renderQuiz()}
+
+/* ── OVERVIEW ── */
+function renderOv(){
+  document.getElementById('ov-list').innerHTML=DAYS.map((d,i)=>{
+    const tot=d.topics.length,dn=d.topics.filter((_,ti)=>checks[i+'_'+ti]).length;
+    const p=Math.round((dn/tot)*100);
+    return`<div class="card" style="cursor:pointer;margin-bottom:9px" onclick="goDay(${i})">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+        <div><div style="font-size:9px;color:var(--text3);font-family:'Space Mono',monospace;margin-bottom:2px">DAY ${i+1}</div>
+        <div style="font-size:13px;font-weight:600;color:var(--text)">${d.s}</div></div>
+        <div class="tb ${BCL[d.b]}">${BTYP[d.b]}</div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3);margin-bottom:4px"><span>${dn}/${tot}</span><span>${p}%</span></div>
+      <div class="pt"><div class="pf" style="width:${p}%"></div></div>
+    </div>`;
+  }).join('');
+}
+
+function goDay(i){curDay=i;showScreen('learn');setTimeout(()=>selDay(i),40)}
+
+/* ── SCREEN ROUTING ── */
+function showScreen(name){
+  curScreen=name;
+  const scr=['learn','iv','ov','sci'];
+  scr.forEach(s=>{
+    document.getElementById('s-'+s).classList.toggle('hidden',s!==name);
+    document.getElementById('n-'+s).classList.toggle('on',s===name);
+  });
+  document.getElementById('scroll').scrollTop=0;
+  if(name==='ov')renderOv();
+  updateProg();
+}
+
+/* ── INIT ── */
+showScreen('learn');
+renderTabs();
+document.getElementById('plan-c').innerHTML=renderPlan(DAYS[0],0);
+updateProg();
 </script>
+</body>
+</html>
